@@ -66,7 +66,7 @@ export class UserService {
   }
 
   public logout() {
-    this.token = 'Токен';
+    this.token = '';
     this.token_expires = new Date;
     this.email = '';
   }
