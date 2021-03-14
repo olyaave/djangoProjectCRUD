@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from './user.service';
+import {BlogPostService} from './blog_post.service';
 import {throwError} from 'rxjs';
 
 @Component({
@@ -9,22 +10,37 @@ import {throwError} from 'rxjs';
 })
 export class AppComponent implements OnInit {
 
-  /**
-   * An object representing the user for the login form
-   */
   public user: any;
 
-  constructor(public _userService: UserService) { }
+  public posts: any;
+
+  public new_post: any;
+
+  constructor(private _blogPostService: BlogPostService, public _userService: UserService) { }
 
   ngOnInit() {
+    this.getPosts();
+    this.new_post = {};
     this.user = {
-      username: '',
+      email: '',
       password: ''
     };
   }
 
   login() {
-    this._userService.login({'username': this.user.username, 'password': this.user.password});
+    this._userService.login({'email': this.user.email, 'password': this.user.password});
+  }
+
+   registration() {
+    this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password});
+  }
+
+  toLogin(){
+    this._userService.toLogin();
+  }
+
+  toRegistration(){
+    this._userService.toRegistration();
   }
 
   refreshToken() {
@@ -34,5 +50,39 @@ export class AppComponent implements OnInit {
   logout() {
     this._userService.logout();
   }
+
+  getPosts() {
+    this._blogPostService.list().subscribe(
+      // the first argument is a function which runs on success
+      (data) => {
+
+        if('posts' in data)
+          this.posts = data['posts'];
+
+        for (let post of this.posts) {
+          post.date = new Date(post.date).toDateString();
+        }
+      },
+      // the second argument is a function which runs on error
+      err => console.error(err),
+      // the third argument is a function which runs on completion
+      () => console.log('done loading posts')
+    );
+  }
+
+  createPost() {
+    this._blogPostService.create(this.new_post, this.user.token).subscribe(
+       data => {
+         // refresh the list
+         this.getPosts();
+         return true;
+       },
+       error => {
+         console.error('Error saving!');
+         return throwError(error);
+       }
+    );
+  }
+
 
 }

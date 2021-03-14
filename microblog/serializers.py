@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from .models import User, BlogPost
+from django.utils import timezone
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
@@ -9,6 +10,14 @@ class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = ('id', 'user', 'date', 'body')
+
+    def create(self, validated_data):
+        return BlogPost.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.body = validated_data.get('body', instance.body)
+        instance.save()
+        return instance
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

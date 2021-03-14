@@ -1,6 +1,9 @@
+import logging
+
 import jwt
 
 from django.conf import settings
+from django.core.mail.backends import console
 from rest_framework import authentication, exceptions
 from .models import User
 

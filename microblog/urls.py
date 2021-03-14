@@ -1,5 +1,5 @@
 
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 
 from . import views
@@ -12,6 +12,7 @@ router.register(r'users', views.UserViewSet)
 '''
 
 urlpatterns = [
-    path(r'api/', BlogPostView.as_view()),
+    re_path(r'api/posts/?', BlogPostView.as_view()),
+    path(r'api/posts/<int:pk>', BlogPostView.as_view()),
     path(r'', views.index, name='index')
 ]

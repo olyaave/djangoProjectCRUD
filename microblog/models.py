@@ -92,6 +92,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def token(self):
         return self._generate_jwt_token()
 
+
     def get_full_name(self):
         return self.username
 
@@ -114,11 +115,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return token.decode('utf-8')
 
 
-
 class BlogPost(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateTimeField(default=timezone.now)
     body = models.CharField(default='', max_length=200)
 
     def __str__(self):
         return self.body
+

@@ -1,27 +1,55 @@
-<h2>Log In</h2>
-<div class="row" *ngIf="!_userService.token">
-  <div class="col-sm-4">
-    <label>Username:</label><br />
-    <input type="text" name="login-username" [(ngModel)]="user.username">
+<div class="flex-column" *ngIf="!_userService.token">
+  <h2 *ngIf="!_userService.is_registration" class="text-center">Log In </h2>
+  <h2 *ngIf="_userService.is_registration" class="text-center">Sign In </h2>
+  <div class=" center-block text-center" >
+    <input type="text" style="margin: 10px;" placeholder="Email" name="login-email" [(ngModel)]="user.email">
+    <span *ngFor="let error of _userService.errors.email"><br />
+    {{ error }}</span>
+  </div>
+  <div class="center-block text-center" *ngIf="_userService.is_registration">
+    <input type="text" style="margin: 10px" placeholder="Username" name="login-username" [(ngModel)]="user.username">
     <span *ngFor="let error of _userService.errors.username"><br />
-    {{ error }}</span></div>
-  <div class="col-sm-4">
-    <label>Password:</label><br />
-    <input type="password" name="login-password" [(ngModel)]="user.password">
+    {{ error }}</span>
+  </div>
+  <div class="center-block text-center">
+    <input type="password" style="margin: 10px" placeholder="Password" name="login-password" [(ngModel)]="user.password">
     <span *ngFor="let error of _userService.errors.password"><br />
     {{ error }}</span>
   </div>
-  <div class="col-sm-4">
-    <button (click)="login()" class="btn btn-primary">Log In</button>
+  <div class="center-block text-center" *ngIf="!_userService.is_registration">
+    <button (click)="login()" class="btn btn-primary" style="margin: 10px">Log In</button>
+    <button (click)="toRegistration()" class="btn btn-primary" style="margin: 10px">Do you want to sing in?</button>
   </div>
-  <div class="col-sm-12">
+  <div class="center-block text-center" *ngIf="_userService.is_registration">
+    <button (click)="registration()" class="btn btn-primary" style="margin: 10px">Sign in</button>
+    <button (click)="toLogin()" class="btn btn-primary" style="margin: 10px">Back to login?</button>
+  </div>
+  <div class="center-block text-center">
     <span *ngFor="let error of _userService.errors.non_field_errors">{{ error }}<br /></span>
   </div>
 </div>
-<div class="row" *ngIf="_userService.token">
-  <div class="col-sm-12">You are logged in as {{ _userService.username }}.<br />
-    Token Expires: {{ _userService.token_expires }}<br />
-    <button (click)="refreshToken()" class="btn btn-primary">Refresh Token</button>
-    <button (click)="logout()" class="btn btn-primary">Log Out</button>
+
+<div class="center-block" *ngIf="_userService.token">
+  <div class="center-block text-center">You are logged in.<br />
+    Token Expires: {{ _userService.token_expires }}<br/>
+    <button (click)="refreshToken()" class="btn btn-primary" style="margin: 10px">Refresh Token</button>
+    <button (click)="logout()" class="btn btn-primary" style="margin: 10px">Log Out</button>
+  </div>
+
+  <h3>Create a new post:</h3>
+  <div class="row mb-1">
+    <div class="col-md-9 mb-1"><input placeholder="Enter your post" type="text" name="body" [(ngModel)]="new_post.body"></div>
+    <div class="col-md-2 offset-3">
+      <button (click)="createPost()"  class="btn btn-primary">Create new post</button>
+    </div>
+  </div>
+
+  <br>
+  <h2 class="text-center">Your feed</h2>
+  <div style="align-content: center;" *ngFor="let post of posts">
+    <div class="flex-column " style="align-content: center; margin: 20px">
+      <div class="text-right"><label>Date:</label>{{ post.date }}       Id: {{ post.id }}</div>
+      <div class="row left">{{ post.body }}</div>
+    </div>
   </div>
 </div>

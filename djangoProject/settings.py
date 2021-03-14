@@ -45,8 +45,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_AUTHENTI CATION_CLASSES': (
-        'microblog.backends.JWTAuthentication',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'microblog.backend.JWTAuthentication',
     ),
 }
 

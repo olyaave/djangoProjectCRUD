@@ -9,11 +9,14 @@ export class UserService {
   // текущий JWT токен
   public token: string  = '';
 
+  // флаг регистрации
+  public is_registration: boolean = false;
+
   // время окончания жизни токена
   public token_expires: Date = new Date;
 
   // логин пользователя
-  public username: string = '';
+  public email: string = '';
 
   // сообщения об ошибках авторизации
   public errors: any = [];
@@ -25,8 +28,20 @@ export class UserService {
   }
 
   // используем http.post() для получения токена
-  public login(user: { username: any; password: any; }) {
+  public login(user: { email: any; password: any; }) {
     this.http.post('/login', JSON.stringify(user), this.httpOptions).subscribe(
+      data => {
+        if('token' in data)
+          this.updateData(data['token']);
+      },
+      err => {
+        this.errors = err['error'];
+      }
+    );
+  }
+
+  public registration(user: { email: any; username: any; password: any; }) {
+    this.http.post('/registration', JSON.stringify(user), this.httpOptions).subscribe(
       data => {
         if('token' in data)
           this.updateData(data['token']);
@@ -39,7 +54,7 @@ export class UserService {
 
   // обновление JWT токена
   public refreshToken() {
-    this.http.post('/api-token-refresh/', JSON.stringify({token: this.token}), this.httpOptions).subscribe(
+    this.http.post('/login', JSON.stringify({token: this.token}), this.httpOptions).subscribe(
       data => {
         if('token' in data)
           this.updateData(data['token']);
@@ -51,9 +66,17 @@ export class UserService {
   }
 
   public logout() {
-    this.token = '';
+    this.token = 'Токен';
     this.token_expires = new Date;
-    this.username = '';
+    this.email = '';
+  }
+
+  public toLogin(){
+    this.is_registration = false;
+  }
+
+  public toRegistration(){
+    this.is_registration = true;
   }
 
   private updateData(token: string) {
@@ -65,7 +88,7 @@ export class UserService {
     const token_decoded = JSON.parse(window.atob(token_parts[1]));
     this.token_expires = new Date(token_decoded.exp * 1000);
     console.log(token_decoded);
-    this.username = token_decoded.username;
+    this.email = token_decoded.email;
   }
 
 }

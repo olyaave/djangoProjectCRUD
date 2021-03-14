@@ -9,16 +9,23 @@ export class BlogPostService {
   }
 
    list() {
-    return this.http.get('/api/posts');
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this._userService.token// this._userService.token
+      })
+    };
+      return this.http.get('/api/posts', httpOptions);
   }
   // отправка POST запроса для создания нового сообщения в блоге
   create(post: any, token: string) {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'JWT ' + this._userService.token
+        'Authorization': 'Bearer ' + this._userService.token
       })
     };
+
     return this.http.post('/api/posts', JSON.stringify(post), httpOptions);
   }
 
