@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'microblog'
+    'blogApp'
 ]
 
 REST_FRAMEWORK = {
@@ -46,16 +46,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'microblog.backend.JWTAuthentication',
+        'blogApp.backend.JWTAuthentication',
     ),
 }
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=100),
 }
 
-AUTH_USER_MODEL = 'microblog.User'
+AUTH_USER_MODEL = 'blogApp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

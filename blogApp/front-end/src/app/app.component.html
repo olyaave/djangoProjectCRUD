@@ -1,4 +1,4 @@
-<div class="flex-column" *ngIf="!_userService.token">
+<div class="flex-column" *ngIf="!_userService.is_auth_user">
   <h2 *ngIf="!_userService.is_registration" class="text-center">Log In </h2>
   <h2 *ngIf="_userService.is_registration" class="text-center">Sign In </h2>
   <div class=" center-block text-center" >
@@ -29,18 +29,16 @@
   </div>
 </div>
 
-<div class="center-block" *ngIf="_userService.token">
-  <div class="center-block text-center">You are logged in.<br />
-    Token Expires: {{ _userService.token_expires }}<br/>
-    <button (click)="refreshToken()" class="btn btn-primary" style="margin: 10px">Refresh Token</button>
+<div class="center-block" *ngIf="_userService.is_auth_user">
+  <div class="center-block text-center">You are logged in as {{_userService.username}}.<br />
     <button (click)="logout()" class="btn btn-primary" style="margin: 10px">Log Out</button>
   </div>
 
   <h3>Create a new post:</h3>
   <div class="row mb-1">
-    <div class="col-md-9 mb-1"><input placeholder="Enter your post" type="text" name="body" [(ngModel)]="new_post.body"></div>
-    <div class="col-md-2 offset-3">
-      <button (click)="createPost()"  class="btn btn-primary">Create new post</button>
+    <div class="col-md-9 mb-1">
+      <input placeholder="Enter your post" type="text" name="body" [(ngModel)]="new_post.body">
+      <button (click)="createPost()"  class="btn btn-primary" style="margin: 10px">Create new post</button>
     </div>
   </div>
 
@@ -48,7 +46,7 @@
   <h2 class="text-center">Your feed</h2>
   <div style="align-content: center;" *ngFor="let post of posts">
     <div class="flex-column " style="align-content: center; margin: 20px">
-      <div class="text-right"><label>Date:</label>{{ post.date }}       Id: {{ post.id }}</div>
+      <div class="text-right"><label>Date:</label>{{ post.date }}</div>
       <div class="row left">{{ post.body }}</div>
     </div>
   </div>

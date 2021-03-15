@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from './user.service';
-import {BlogPostService} from './blog_post.service';
+import {BlogPostService} from './blog.service';
 import {throwError} from 'rxjs';
 
 @Component({
@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.getPosts();
     this.new_post = {};
+    this._userService.check();
     this.user = {
       email: '',
       password: ''
@@ -55,7 +56,6 @@ export class AppComponent implements OnInit {
     this._blogPostService.list().subscribe(
       // the first argument is a function which runs on success
       (data) => {
-
         if('posts' in data)
           this.posts = data['posts'];
 
@@ -63,9 +63,7 @@ export class AppComponent implements OnInit {
           post.date = new Date(post.date).toDateString();
         }
       },
-      // the second argument is a function which runs on error
       err => console.error(err),
-      // the third argument is a function which runs on completion
       () => console.log('done loading posts')
     );
   }

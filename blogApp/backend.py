@@ -1,9 +1,6 @@
-import logging
-
 import jwt
 
 from django.conf import settings
-from django.core.mail.backends import console
 from rest_framework import authentication, exceptions
 from .models import User
 
@@ -69,7 +66,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
         # By now, we are sure there is a *chance* that authentication will
         # succeed. We delegate the actual credentials authentication to the
         # method below.
-        return self._authenticate_credentials(request, token)
+        return self._authenticate_credentials(token)
 
     def _authenticate_credentials(self, request, token):
         """
@@ -92,4 +89,4 @@ class JWTAuthentication(authentication.BaseAuthentication):
             msg = 'This user has been deactivated.'
             raise exceptions.AuthenticationFailed(msg)
 
-        return (user, token)
+        return user, token

@@ -6,17 +6,17 @@ export class UserService {
 
   private httpOptions: any;
 
-  // текущий JWT токен
-  public token: string  = '';
+  // флаг об авторизованности пользователя
+  public is_auth_user: boolean = false;
 
   // флаг регистрации
   public is_registration: boolean = false;
 
-  // время окончания жизни токена
-  public token_expires: Date = new Date;
-
   // логин пользователя
   public email: string = '';
+
+  // логин пользователя
+  public username: string = '';
 
   // сообщения об ошибках авторизации
   public errors: any = [];
@@ -31,8 +31,8 @@ export class UserService {
   public login(user: { email: any; password: any; }) {
     this.http.post('/login', JSON.stringify(user), this.httpOptions).subscribe(
       data => {
-        if('token' in data)
-          this.updateData(data['token']);
+          this.is_auth_user = true
+          this.check()
       },
       err => {
         this.errors = err['error'];
@@ -42,9 +42,8 @@ export class UserService {
 
   public registration(user: { email: any; username: any; password: any; }) {
     this.http.post('/registration', JSON.stringify(user), this.httpOptions).subscribe(
-      data => {
-        if('token' in data)
-          this.updateData(data['token']);
+      data  => {
+          this.is_auth_user = true
       },
       err => {
         this.errors = err['error'];
@@ -54,10 +53,20 @@ export class UserService {
 
   // обновление JWT токена
   public refreshToken() {
-    this.http.post('/login', JSON.stringify({token: this.token}), this.httpOptions).subscribe(
+    this.http.post('/login', this.httpOptions).subscribe(
+      data => {},
+      err => {
+        this.errors = err['error'];
+      }
+    );
+  }
+
+    public logout() {
+    this.http.delete('/login', this.httpOptions).subscribe(
       data => {
-        if('token' in data)
-          this.updateData(data['token']);
+          this.email = '';
+          this.username = '';
+          this.is_auth_user = false
       },
       err => {
         this.errors = err['error'];
@@ -65,10 +74,19 @@ export class UserService {
     );
   }
 
-  public logout() {
-    this.token = '';
-    this.token_expires = new Date;
-    this.email = '';
+    public check() {
+    this.http.get('/api/check', this.httpOptions).subscribe(
+      data  => {
+        if('username' in data){
+          this.username = data['username']
+          this.email = data['email']
+          this.is_auth_user = true
+          }
+      },
+      err => {
+        this.errors = err['error'];
+      }
+    );
   }
 
   public toLogin(){
@@ -79,16 +97,19 @@ export class UserService {
     this.is_registration = true;
   }
 
+
+/*
   private updateData(token: string) {
     this.token = token;
     this.errors = [];
 
     // декодирование токена для получения логина и времени жизни токена
+
     const token_parts = this.token.split(/\./);
     const token_decoded = JSON.parse(window.atob(token_parts[1]));
     this.token_expires = new Date(token_decoded.exp * 1000);
     console.log(token_decoded);
     this.email = token_decoded.email;
   }
-
+*/
 }

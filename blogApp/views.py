@@ -1,10 +1,12 @@
-from django.contrib.auth import get_user_model
+import jwt
+from django.conf import settings
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import exceptions
 
 from .models import User
 from .models import BlogPost
@@ -58,49 +60,59 @@ class RegistrationAPIView(APIView):
         serializer.save()
 
         response = Response(serializer.data, status=status.HTTP_200_OK)
-        response.set_cookie('Authorization', "Bearer " + serializer.data.get('token', None))
+        response.set_cookie('Authorization', "Bearer " + serializer.data.get('token', None), max_age=1000000)
         return response
 
 
 class LoginAPIView(APIView):
-    """
-    Logs in an existing user.
-    """
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
 
     def post(self, request):
-        """
-        Checks is user exists.
-        Email and password are required.
-        Returns a JSON web token.
-        """
-
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         response = Response(serializer.data, status=status.HTTP_200_OK)
-        response.set_cookie('Authorization', "Bearer " + serializer.data.get('token', None))
+        response.set_cookie('Authorization', "Bearer " + serializer.data.get('token', None), max_age=1000000,
+                            httponly=True)
+        return response
+
+    def delete(self, request):
+        response = Response({'Success'}, status=status.HTTP_200_OK)
+        response.delete_cookie('Authorization')
         return response
 
 
-'''
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    Provides basic CRUD functions for the User model
-    """
-    queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+class UserView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
 
+    def get(self, request):
+        response = Response({"User is not logged in."}, status=status.HTTP_401_UNAUTHORIZED)
+        if 'Authorization' in request.COOKIES:
+            token_header = request.COOKIES['Authorization']
+            token = token_header.split()[1]
+            user = self.check_token(token)
+            user_bd = get_object_or_404(User.objects.all(), email=user.email)
+            if user_bd.password == user.password:
+                response = Response({"username": user.username, "email": user.email}, status=status.HTTP_200_OK)
+        return response
 
-class BlogPostViewSet(viewsets.ModelViewSet):
-    """
-    Provides basic CRUD functions for the Blog Post model
-    """
-    queryset = BlogPost.objects.all()
-    serializer_class = serializers.BlogPostSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    def check_token(self, token):
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-'''
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY)
+        except:
+            msg = 'Invalid authentication. Could not decode token.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        try:
+            user = User.objects.get(pk=payload['id'])
+        except User.DoesNotExist:
+            msg = 'No user matching this token was found.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        if not user.is_active:
+            msg = 'This user has been deactivated.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        return user
