@@ -46,7 +46,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'blogApp.backend.JWTAuthentication',
+        'blogApp.jwtAuthHandler.JWTAuthentication',
     ),
 }
 

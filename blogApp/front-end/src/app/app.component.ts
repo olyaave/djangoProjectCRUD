@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
 
   getPosts() {
     this._blogPostService.list().subscribe(
-      // the first argument is a function which runs on success
       (data) => {
         if('posts' in data)
           this.posts = data['posts'];

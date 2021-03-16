@@ -16,7 +16,7 @@ export class BlogPostService {
     };
       return this.http.get('/api/posts', httpOptions);
   }
-  // отправка POST запроса для создания нового сообщения в блоге
+
   create(post: any, token: string) {
     let httpOptions = {
       headers: new HttpHeaders({

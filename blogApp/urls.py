@@ -1,6 +1,5 @@
 
-from django.urls import path, include, re_path
-from rest_framework import routers
+from django.urls import path, re_path
 
 from . import views
 from .views import BlogPostView, UserView

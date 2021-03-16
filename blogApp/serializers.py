@@ -21,13 +21,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    """
-    Creates a new user.
-    Email, username, and password are required.
-    Returns a JSON web token.
-    """
 
-    # The password must be validated and should not be read by the client
     password = serializers.CharField(
         max_length=128,
         min_length=8,
@@ -47,11 +41,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    """
-    Authenticates an existing user.
-    Email and password are required.
-    Returns a JSON web token.
-    """
+
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
 
@@ -60,9 +50,7 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-        """
-        Validates user data.
-        """
+
         email = data.get('email', None)
         password = data.get('password', None)
 

@@ -1,7 +1,6 @@
 
 from django.contrib import admin
-from django.urls import path, include, re_path
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+from django.urls import include, re_path
 
 from blogApp.views import RegistrationAPIView, LoginAPIView
 
