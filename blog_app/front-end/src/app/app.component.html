@@ -30,24 +30,42 @@
 </div>
 
 <div class="center-block" *ngIf="_userService.is_auth_user">
-  <div class="center-block text-center">You are logged in as {{_userService.username}}.<br />
+  <div class="center-block text-right">
+    <label>You are logged in as {{_userService.username}}.</label>
     <button (click)="logout()" class="btn btn-primary" style="margin: 10px">Log Out</button>
   </div>
+  <div class="row" style="margin-top: 20px">
+    <div class="col-md-4">
+      <h3>Create a new post:</h3>
+      <div class="col-md-5 mb-1">
+        <input placeholder="Enter your post" type="text" name="create_text" [(ngModel)]="creating_post.body">
+        <button (click)="createPost()"  class="btn btn-primary m-2" style="margin: 10px">Create</button>
+      </div>
+    </div>
 
-  <h3>Create a new post:</h3>
-  <div class="row mb-1">
-    <div class="col-md-9 mb-1">
-      <input placeholder="Enter your post" type="text" name="body" [(ngModel)]="new_post.body">
-      <button (click)="createPost()"  class="btn btn-primary" style="margin: 10px">Create new post</button>
+    <div class="col-md-4 mb-1">
+      <h3>Delete post:</h3>
+      <div class="col-md-9 mb-1">
+        <input placeholder="Entry post id" type="text" name="delete_id" [(ngModel)]="deleting_id">
+        <button (click)="deletePost()"  class="btn btn-primary m-2" style="margin: 10px">Delete</button>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-1">
+      <h3>Edit post:</h3>
+        <div class="flex-lg-row ml-2">
+          <input placeholder="id" type="text" name="edit_id" class="col-md-3 mr-2 ml-2" [(ngModel)]="editing_post.id">
+          <input placeholder="Entry text" type="text" name="edit_text" class="col-md-7" [(ngModel)]="editing_post.body">
+        </div>
+        <button (click)="editPost()"  class="btn btn-primary ml-4 mt-2">Edit</button>
     </div>
   </div>
-
   <br>
   <h2 class="text-center">Your feed</h2>
   <div style="align-content: center;" *ngFor="let post of posts">
-    <div class="flex-column " style="align-content: center; margin: 20px">
-      <div class="text-right"><label>Date:</label>{{ post.date }}</div>
-      <div class="row left">{{ post.body }}</div>
+    <div class="flex-column" style="align-content: center; margin: 20px">
+      <div class="text-right">{{ post.date }}</div>
+      <div class="row left">{{ post.id }}. &emsp;  {{ post.body }}</div>
     </div>
   </div>
 </div>

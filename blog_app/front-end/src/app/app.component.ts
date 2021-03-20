@@ -14,26 +14,38 @@ export class AppComponent implements OnInit {
 
   public posts: any;
 
-  public new_post: any;
+  public creating_post: any;
+
+  public deleting_id: any;
+
+  public editing_post:any;
 
   constructor(private _blogPostService: BlogPostService, public _userService: UserService) { }
 
   ngOnInit() {
-    this.getPosts();
-    this.new_post = {};
-    this._userService.check();
+    this.creating_post = {};
+    this.editing_post = {};
+    this.update()
     this.user = {
       email: '',
       password: ''
     };
   }
 
+  update(){
+    this._userService.check();
+    this.getPosts();
+  }
+
   login() {
     this._userService.login({'email': this.user.email, 'password': this.user.password});
+    this.update()
+    console.log('I"m after update')
   }
 
    registration() {
-    this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password});
+   this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password});
+   this.update()
   }
 
   toLogin(){
@@ -42,10 +54,6 @@ export class AppComponent implements OnInit {
 
   toRegistration(){
     this._userService.toRegistration();
-  }
-
-  refreshToken() {
-    this._userService.refreshToken();
   }
 
   logout() {
@@ -68,9 +76,9 @@ export class AppComponent implements OnInit {
   }
 
   createPost() {
-    this._blogPostService.create(this.new_post, this.user.token).subscribe(
+    this._blogPostService.create(this.creating_post).subscribe(
        data => {
-         // refresh the list
+         this.creating_post = {}
          this.getPosts();
          return true;
        },
@@ -80,6 +88,31 @@ export class AppComponent implements OnInit {
        }
     );
   }
+  deletePost() {
+    this._blogPostService.delete(this.deleting_id).subscribe(
+       data => {
+         this.deleting_id = ""
+         this.getPosts();
+         return true;
+       },
+       error => {
+         console.error('Error deleting!');
+         return throwError(error);
+       }
+    );
+  }
 
-
+  editPost() {
+    this._blogPostService.edit(this.editing_post.id, this.editing_post.body).subscribe(
+       data => {
+         this.editing_post = {}
+         this.getPosts();
+         return true;
+       },
+       error => {
+         console.error('Error deleting!');
+         return throwError(error);
+       }
+    );
+  }
 }

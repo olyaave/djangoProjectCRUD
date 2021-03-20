@@ -26,7 +26,6 @@ export class UserService {
     this.http.post('/login', JSON.stringify(user), this.httpOptions).subscribe(
       data => {
           this.is_auth_user = true
-          this.check()
       },
       err => {
         this.errors = err['error'];
@@ -38,18 +37,12 @@ export class UserService {
     this.http.post('/registration', JSON.stringify(user), this.httpOptions).subscribe(
       data  => {
           this.is_auth_user = true
+          this.check();
+          return true;
       },
       err => {
         this.errors = err['error'];
-      }
-    );
-  }
-
-  public refreshToken() {
-    this.http.post('/login', this.httpOptions).subscribe(
-      data => {},
-      err => {
-        this.errors = err['error'];
+        return false;
       }
     );
   }

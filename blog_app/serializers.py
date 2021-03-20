@@ -1,7 +1,8 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user
 from rest_framework import serializers
+
+from .backend_auth import JWTAuthentication
 from .models import User, BlogPost
-from django.utils import timezone
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
@@ -21,15 +22,12 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-
     password = serializers.CharField(
         max_length=128,
         min_length=8,
         write_only=True,
     )
 
-    # The client should not be able to send a token along with a registration
-    # request. Making `token` read-only handles that for us.
     token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
@@ -41,16 +39,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
 
-    # Ignore these fields if they are included in the request.
     username = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-
         email = data.get('email', None)
         password = data.get('password', None)
 
@@ -79,3 +74,17 @@ class LoginSerializer(serializers.Serializer):
         return {
             'token': user.token,
         }
+
+
+class AuthSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=255, write_only=True)
+
+    email = serializers.EmailField(read_only=True)
+    password = serializers.CharField(max_length=128, read_only=True)
+    username = serializers.CharField(max_length=255, read_only=True)
+
+    def validate(self, data):
+        token = data.get('token', None)
+        backend = JWTAuthentication()
+        data = backend.get_auth_user(token=token)
+        return data[0]

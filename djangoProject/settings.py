@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'blogApp'
+    'blog_app'
 ]
 
 REST_FRAMEWORK = {
@@ -46,16 +46,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'blogApp.jwtAuthHandler.JWTAuthentication',
+        'blog_app.backend_auth.JWTAuthentication',
     ),
 }
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=100),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600),
 }
 
-AUTH_USER_MODEL = 'blogApp.User'
+AUTH_USER_MODEL = 'blog_app.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
