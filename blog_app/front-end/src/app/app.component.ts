@@ -38,14 +38,31 @@ export class AppComponent implements OnInit {
   }
 
   login() {
-    this._userService.login({'email': this.user.email, 'password': this.user.password});
-    this.update()
-    console.log('I"m after update')
+    this._userService.login({'email': this.user.email, 'password': this.user.password}).subscribe(
+      ()  => {
+          this._userService.is_auth_user = true;
+      },
+      err => {
+        this._userService.errors = err['error'];
+      },
+      () => {
+        this.ngOnInit();
+      }
+    );
   }
 
    registration() {
-   this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password});
-   this.update()
+   this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password}).subscribe(
+     ()  => {
+          this._userService.is_auth_user = true;
+      },
+      err => {
+        this._userService.errors = err['error'];
+      },
+      () => {
+        this.ngOnInit();
+      }
+    );
   }
 
   toLogin(){

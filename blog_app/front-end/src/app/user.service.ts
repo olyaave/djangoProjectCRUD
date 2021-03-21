@@ -23,28 +23,11 @@ export class UserService {
   }
 
   public login(user: { email: any; password: any; }) {
-    this.http.post('/login', JSON.stringify(user), this.httpOptions).subscribe(
-      data => {
-          this.is_auth_user = true
-      },
-      err => {
-        this.errors = err['error'];
-      }
-    );
+    return this.http.post('/login', JSON.stringify(user), this.httpOptions)
   }
 
   public registration(user: { email: any; username: any; password: any; }) {
-    this.http.post('/registration', JSON.stringify(user), this.httpOptions).subscribe(
-      data  => {
-          this.is_auth_user = true
-          this.check();
-          return true;
-      },
-      err => {
-        this.errors = err['error'];
-        return false;
-      }
-    );
+    return this.http.post('/registration', JSON.stringify(user), this.httpOptions);
   }
 
     public logout() {
