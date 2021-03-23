@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
 
   login() {
     this._userService.login({'email': this.user.email, 'password': this.user.password}).subscribe(
-      ()  => {
+        () => {
           this._userService.is_auth_user = true;
       },
       err => {
@@ -53,8 +53,9 @@ export class AppComponent implements OnInit {
 
    registration() {
    this._userService.registration({'email': this.user.email, 'username': this.user.username, 'password': this.user.password}).subscribe(
-     ()  => {
+     (response)  => {
           this._userService.is_auth_user = true;
+
       },
       err => {
         this._userService.errors = err['error'];

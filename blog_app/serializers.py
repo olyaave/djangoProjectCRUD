@@ -74,17 +74,3 @@ class LoginSerializer(serializers.Serializer):
         return {
             'token': user.token,
         }
-
-
-class AuthSerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=255, write_only=True)
-
-    email = serializers.EmailField(read_only=True)
-    password = serializers.CharField(max_length=128, read_only=True)
-    username = serializers.CharField(max_length=255, read_only=True)
-
-    def validate(self, data):
-        token = data.get('token', None)
-        backend = JWTAuthentication()
-        data = backend.get_auth_user(token=token)
-        return data[0]

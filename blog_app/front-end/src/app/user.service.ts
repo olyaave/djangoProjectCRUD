@@ -4,6 +4,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 @Injectable()
 export class UserService {
 
+  token: any;
+
   private httpOptions: any;
 
   public is_auth_user: boolean = false;
@@ -18,8 +20,7 @@ export class UserService {
 
   constructor(private http: HttpClient) {
     this.httpOptions = {
-      headers: new HttpHeaders({'Content-Type': 'application/json'})
-    };
+      headers: new HttpHeaders({'Content-Type': 'application/json'})}
   }
 
   public login(user: { email: any; password: any; }) {
@@ -53,6 +54,7 @@ export class UserService {
           }
       },
       err => {
+        this.is_auth_user = false
         this.errors = err['error'];
       }
     );
